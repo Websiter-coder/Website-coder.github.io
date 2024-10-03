@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unsent Messages Project</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #F2F2F2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #6A0DAD;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+        }
+
+        h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .profile-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            color: #6A0DAD;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .profile-btn:hover {
+            background-color: #6A0DAD;
+            color: white;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 20px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .form-container textarea {
+            width: 100%;
+            padding: 15px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            resize: none;
+            height: 150px;
+        }
+
+        .form-container input[type="button"] {
+            padding: 15px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            border: none;
+            background-color: #6A0DAD;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-container input[type="button"]:hover {
+            background-color: #5A0C91;
+        }
+
+        .form-container .color-picker, .form-container .emotion-picker {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .form-container input[type="color"], .form-container select {
+            width: 50px;
+            height: 50px;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .message-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .message-card {
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .message-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-text {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .message-footer {
+            font-size: 0.9em;
+            opacity: 0.8;
+            text-align: right;
+        }
+
+        .message-emotion {
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .emoji-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .emoji-buttons span {
+            font-size: 1.5em;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #fff;
+            color: #6A0DAD;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: #6A0DAD;
+            color: white;
+        }
+
+        .search-bar, .filter-bar {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 1.1em;
+        }
+
+        .quote-container {
+            text-align: center;
+            margin-bottom: 20px;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: #6A0DAD;
+        }
+
+        .profile-section {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            width: 400px;
+        }
+
+        .profile-section input, .profile-section textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .close-profile {
+            cursor: pointer;
+            background-color: #6A0DAD;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-align: right;
+        }
+
+        .close-profile:hover {
+            background-color: #5A0C91;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Unsent Messages Project</h1>
+    <button class="profile-btn" onclick="openProfileSection()">Create/Edit Profile</button>
+</header>
+
+<div class="container">
+    <div class="quote-container" id="quoteContainer"></div>
+
+    <div class="form-container">
+        <h2>Write Your Unsent Message</h2>
+        <textarea id="messageInput" placeholder="Write your message..."></textarea>
+        
+        <!-- Color Picker -->
+        <div class="color-picker">
+            <label for="colorPicker">Choose a card color:</label>
+            <input type="color" id="colorPicker" value="#6A0DAD">
+        </div>
+
+        <!-- Emotion Picker -->
+        <div class="emotion-picker">
+            <label for="emotionPicker">Select an emotion:</label>
+            <select id="emotionPicker">
+                <option value="love">Love</option>
+                <option value="regret">Regret</option>
+                <option value="happiness">Happiness</option>
+                <option value="sadness">Sadness</option>
+                <option value="nostalgia">Nostalgia</option>
+                <option value="gratitude">Gratitude</option>
+            </select>
+        </div>
+
+        <input type="button" value="Submit" onclick="submitMessage()">
+    </div>
+
+    <input class="search-bar" id="searchInput" onkeyup="searchMessages()" placeholder="Search for a message...">
+    <select class="filter-bar" id="emotionFilter" onchange="filterMessages()">
+        <option value="all">Filter by Emotion</option>
+        <option value="love">Love</option>
+        <option value="regret">Regret</option>
+        <option value="happiness">Happiness</option>
+        <option value="sadness">Sadness</option>
+        <option value="nostalgia">Nostalgia</option>
+        <option value="gratitude">Gratitude</option>
+    </select>
+
+    <div class="message-grid" id="messageContainer"></div>
+</div>
+
+<div id="overlay" class="overlay" onclick="closeProfileSection()"></div>
+<div id="profileSection" class="profile-section">
+    <h2>Customize Your Anonymous Profile</h2>
+    <input type="text" id="profileName" placeholder="Enter your profile name">
+    <textarea id="profileSignature" rows="3" placeholder="Enter your profile signature"></textarea>
+    <button class="close-profile" onclick="saveProfile()">Save</button>
+</div>
+
+<script>
+    const quotes = [
+        "Sometimes, it's the words left unsaid that matter the most.",
+        "An unsent message is a letter from your heart to your mind.",
+        "The quietest words can make the loudest echoes in your soul.",
+        "Send it or don't, but make sure to listen to it too.",
+        "It's okay to keep some words unsaid, but not the ones that could heal.",
+        "Your silence speaks volumes, make sure it's the right message.",
+        "Unspoken words carry the weight of the world; let them fly free.",
+        "Even in silence, your heart finds a way to speak."
+    ];
+
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById('quoteContainer').innerText = randomQuote;
+
+    window.onload = function () {
+        loadQuote();
+        loadProfile();
+        loadMessages();
+    }
+
+    function submitMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const colorPicker = document.getElementById('colorPicker');
+        const emotionPicker = document.getElementById('emotionPicker');
+        const messageContainer = document.getElementById('messageContainer');
+        const messageText = messageInput.value.trim();
+        const selectedColor = colorPicker.value;
+        const selectedEmotion = emotionPicker.value;
+
+        if (messageText === "") {
+            alert("Please write a message before submitting.");
+            return;
+        }
+
+        const messageCard = document.createElement('div');
+        messageCard.classList.add('message-card');
+        messageCard.style.backgroundColor = selectedColor;
+        messageCard.setAttribute('data-emotion', selectedEmotion);
+
+        const messageContent = document.createElement('p');
+        messageContent.classList.add('message-text');
+        messageContent.innerText = messageText;
+
+        const messageEmotion = document.createElement('p');
+        messageEmotion.classList.add('message-emotion');
+        messageEmotion.innerText = `Emotion: ${selectedEmotion}`;
+
+        const messageFooter = document.createElement('p');
+        messageFooter.classList.add('message-footer');
+        messageFooter.innerText = "Anonymous";
+
+        const deleteButton = document.createElement('button');
+        deleteButton.classList.add('delete-btn');
+        deleteButton.innerText = 'Delete';
+        deleteButton.onclick = function () {
+            messageCard.remove();
+            saveMessages();
+        };
+
+        const emojiButtons = document.createElement('div');
+        emojiButtons.classList.add('emoji-buttons');
+        emojiButtons.innerHTML = `
+            <span>😊</span>
+            <span>😢</span>
+            <span>❤️</span>
+            <span>👍</span>
+        `;
+        emojiButtons.querySelectorAll('span').forEach(emoji => {
+            emoji.onclick = function() {
+                alert(`You reacted with ${emoji.innerText}`);
+            }
+        });
+
+        messageCard.appendChild(messageContent);
+        messageCard.appendChild(messageEmotion);
+        messageCard.appendChild(messageFooter);
+        messageCard.appendChild(emojiButtons);
+        messageCard.appendChild(deleteButton);
+
+        messageContainer.appendChild(messageCard);
+
+        messageInput.value = "";
+        saveMessages();
+    }
+
+    function loadMessages() {
+        const savedMessages = localStorage.getItem('messages');
+        const messageContainer = document.getElementById('messageContainer');
+        if (savedMessages) {
+            messageContainer.innerHTML = savedMessages;
+        }
+    }
+
+    function saveMessages() {
+        const messageContainer = document.getElementById('messageContainer');
+        localStorage.setItem('messages', messageContainer.innerHTML);
+    }
+
+    function openProfileSection() {
+        document.getElementById('profileSection').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+    }
+
+    function closeProfileSection() {
+        document.getElementById('profileSection').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+    }
+
+    function saveProfile() {
+        const profileName = document.getElementById('profileName').value;
+        const profileSignature = document.getElementById('profileSignature').value;
+        localStorage.setItem('profileName', profileName);
+        localStorage.setItem('profileSignature', profileSignature);
+        closeProfileSection();
+    }
+
+    function loadProfile() {
+        const profileName = localStorage.getItem('profileName');
+        const profileSignature = localStorage.getItem('profileSignature');
+        if (profileName) {
+            document.getElementById('profileName').value = profileName;
+        }
+        if (profileSignature) {
+            document.getElementById('profileSignature').value = profileSignature;
+        }
+    }
+
+    function searchMessages() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const messages = document.querySelectorAll('.message-card');
+
+        messages.forEach(message => {
+            const text = message.innerText.toLowerCase();
+            if (text.includes(searchInput)) {
+                message.style.display = "";
+            } else {
+                message.style.display = "none";
+            }
+        });
+    }
+
+    function filterMessages() {
+        const emotionFilter = document.getElementById('emotionFilter').value;
+        const messages = document.querySelectorAll('.message-card');
+
+        messages.forEach(message => {
+            const emotion = message.getAttribute('data-emotion');
+            if (emotionFilter === "all" || emotion === emotionFilter) {
+                message.style.display = "";
+            } else {
+                message.style.display = "none";
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
